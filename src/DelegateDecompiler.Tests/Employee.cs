@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace DelegateDecompiler.Tests
 {
@@ -27,6 +28,12 @@ namespace DelegateDecompiler.Tests
         public string FullNameWithoutAttribute
         {
             get { return FirstName + " " + LastName; }
+        }
+
+        [Computed]
+        public string FullNameRecursiveMethod(params string[] args)
+        {
+            return args.Any() ? args.First() + " " + FullNameRecursiveMethod(args.Skip(1).ToArray()) : FullName;
         }
 
         [Computed]

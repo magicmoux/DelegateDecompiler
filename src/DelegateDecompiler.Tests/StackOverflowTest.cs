@@ -80,5 +80,23 @@ namespace DelegateDecompiler.Tests
             thread.Start();
             thread.Join();
         }
+
+        [Test]
+        public void ThrowOnDecompiledMemberRecursion()
+        {
+            Func<Employee, string> compiled = e => e.FullNameRecursiveMethod(new string[] { "Should", "throw"});
+            Configuration.ThrowExceptionsOnDecompilationLoops = true;
+            var decompileException = Assert.Throws<NotSupportedException>(() => compiled.Decompile());
+            Console.Write(decompileException.Message);
+        }
+
+        [Test]
+        public void IgnoreDecompiledMemberRecursion()
+        {
+            Func<Employee, string> compiled = e => e.FullNameRecursiveMethod(new string[] { "Should", "warn" });
+            Configuration.ThrowExceptionsOnDecompilationLoops = false;
+            var test = compiled.Decompile();
+        }
+
     }
 }

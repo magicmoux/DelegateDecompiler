@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace DelegateDecompiler
 {
+
     public abstract class Configuration
     {
         private static readonly object locker = new object();
@@ -41,6 +42,14 @@ namespace DelegateDecompiler
             }
 
             throw new InvalidOperationException("DelegateDecompiler has been configured already");
+        }
+
+        private bool _ThrowExceptionsOnDecompilationLoops = true;
+
+        public static bool ThrowExceptionsOnDecompilationLoops
+        {
+            get { return Instance._ThrowExceptionsOnDecompilationLoops; }
+            set { Instance._ThrowExceptionsOnDecompilationLoops = value; DecompileExtensions.Cache.Clear(); }
         }
 
         public abstract bool ShouldDecompile(MemberInfo memberInfo);
