@@ -12,7 +12,7 @@ namespace DelegateDecompiler.Tests
         [Test]
         public void ExpressionWithNull()
         {
-            Expression<Func<string>> expected = () => null;
+            //Now redundant : Expression<Func<string>> expected = () => null; 
             Func<string> compiled = () => null;
             Test(expected, compiled);
         }
@@ -44,10 +44,13 @@ namespace DelegateDecompiler.Tests
         [Test]
         public void ExpressionWithGetValueOrDefault()
         {
-            Expression<Func<int?, int>> expected1 = x => x ?? 0;
-            Expression<Func<int?, int>> expected2 = x => x.GetValueOrDefault();
+            //Now redundant : Expression<Func<int?, int>> expected1 = x => x ?? 0;
+            //Now redundant : Expression<Func<int?, int>> expected2 = x => x.GetValueOrDefault();
             Func<int?, int> compiled = x => x.GetValueOrDefault();
-            Test(expected1, expected2, compiled);
+            compiled.DecompilationShouldMatch(
+                x => x ?? 0,
+                x => x.GetValueOrDefault()
+            );
         }
 
         [Test]

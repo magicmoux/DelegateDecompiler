@@ -1,13 +1,51 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using NUnit.Framework;
 
 namespace DelegateDecompiler.Tests
 {
+    public static class DecompilerTestsBaseExtensions
+    {
+        static Func<LambdaExpression, string> matchesBody = expected => expected.Body.ToString();
+        static Func<LambdaExpression, string> matchesDebugView = expected => DecompilerTestsBase.DebugView(expected.Body);
+
+        public static void DecompilationShouldMatch<T>(this T compiled, params Expression<T>[] expected)
+            where T : Delegate
+        {
+            DecompilationShouldMatch(compiled, true, expected);
+        }
+
+
+        public static void DecompilationShouldMatch<T>(this T compiled, bool compareDebugView, params Expression<T>[] expected)
+        {
+            //Double cast required as we can not convert T to Delegate directly
+            var decompiled = ((Delegate)(object)compiled).Decompile();
+
+            var expectation = Is.EqualTo(matchesBody(expected.First()));
+            foreach (var expression in expected.Skip(1))
+            {
+                expectation = expectation.Or.EqualTo(matchesBody(expression));
+            }
+            Assert.That(decompiled.Body.ToString(), expectation);
+            if (compareDebugView)
+            {
+                expectation = Is.EqualTo(matchesDebugView(expected.First()));
+                foreach (var expression in expected.Skip(1))
+                {
+                    expectation = expectation.Or.EqualTo(matchesDebugView(expression));
+                }
+                Assert.That(DecompilerTestsBase.DebugView(decompiled.Body), expectation);
+            }
+
+        }
+
+    }
+
     public class DecompilerTestsBase
     {
-        protected static readonly Func<Expression, string> DebugView = BuildDebugView();
+        internal static readonly Func<Expression, string> DebugView = BuildDebugView();
 
         private static Func<Expression, string> BuildDebugView()
         {
