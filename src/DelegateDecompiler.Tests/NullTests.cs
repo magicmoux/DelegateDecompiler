@@ -14,7 +14,9 @@ namespace DelegateDecompiler.Tests
         {
             //Now redundant : Expression<Func<string>> expected = () => null; 
             Func<string> compiled = () => null;
-            Test(expected, compiled);
+            compiled.DecompilationShouldMatch(
+                () => null
+            );
         }
 
         [Test]
