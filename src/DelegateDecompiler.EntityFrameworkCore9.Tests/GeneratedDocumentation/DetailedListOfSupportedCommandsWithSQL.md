@@ -1,6 +1,6 @@
 Detail With Sql of supported commands
 ============
-## Documentation produced for DelegateDecompiler, version 0.34.2.0 on Wednesday, 05 March 2025 13:06
+## Documentation produced for DelegateDecompiler, version 1.0.0.0 on Sunday, 02 November 2025 10:01
 
 This file documents what linq commands **DelegateDecompiler** supports when
 working with [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) (EF).
@@ -769,6 +769,32 @@ SELECT [e].[EfParentId] AS [ParentId], COALESCE((
     FROM [EfChildren] AS [e0]
     WHERE [e0].[EfParentId] = [e].[EfParentId]), 0) AS [FirstChildId]
 FROM [EfParents] AS [e]
+```
+
+
+
+### Group: Expression Factory Extension Point Features
+#### [Order By Sequence Linq Extension](../TestGroup91ExpressionFactoryExtensionPointFeatures/Test01OrderBySequenceLinqExtension.cs):
+- Supported
+  * Basic Order By Sequence Extension (line 151)
+     * T-Sql executed is
+
+```SQL
+SELECT [e].[EfParentId], [e2].[EfChildId], [e2].[ChildBool], [e2].[ChildDateTime], [e2].[ChildDouble], [e2].[ChildInt], [e2].[ChildString], [e2].[ChildTimeSpan], [e2].[EfParentId]
+FROM [EfParents] AS [e]
+LEFT JOIN (
+    SELECT [e1].[EfChildId], [e1].[ChildBool], [e1].[ChildDateTime], [e1].[ChildDouble], [e1].[ChildInt], [e1].[ChildString], [e1].[ChildTimeSpan], [e1].[EfParentId]
+    FROM (
+        SELECT [e0].[EfChildId], [e0].[ChildBool], [e0].[ChildDateTime], [e0].[ChildDouble], [e0].[ChildInt], [e0].[ChildString], [e0].[ChildTimeSpan], [e0].[EfParentId], ROW_NUMBER() OVER(PARTITION BY [e0].[EfParentId] ORDER BY CASE
+            WHEN 1 = [e0].[EfChildId] THEN 2
+            WHEN 3 = [e0].[EfChildId] THEN 1
+            WHEN 2 = [e0].[EfChildId] THEN 0
+            ELSE 2147483647
+        END) AS [row]
+        FROM [EfChildren] AS [e0]
+    ) AS [e1]
+    WHERE [e1].[row] <= 1
+) AS [e2] ON [e].[EfParentId] = [e2].[EfParentId]
 ```
 
 

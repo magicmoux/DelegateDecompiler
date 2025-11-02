@@ -1,6 +1,6 @@
 Detail With Sql of supported commands
 ============
-## Documentation produced for DelegateDecompiler, version 0.34.2.0 on Wednesday, 05 March 2025 13:06
+## Documentation produced for DelegateDecompiler, version 1.0.0.0 on Sunday, 02 November 2025 10:01
 
 This file documents what linq commands **DelegateDecompiler** supports when
 working with [Entity Framework v6.1](http://msdn.microsoft.com/en-us/data/aa937723) (EF).
@@ -679,17 +679,17 @@ SELECT
 
 ```SQL
 SELECT 
-    [GroupBy2].[A1] AS [C1]
+    [GroupBy3].[A1] AS [C1]
     FROM ( SELECT 
         SUM([Extent1].[A1_0]) AS [A1]
         FROM ( SELECT 
             (SELECT 
                 COUNT(1) AS [A1]
-                FROM [dbo].[EfChilds] AS [Extent2]
-                WHERE [Extent1].[EfParentId] = [Extent2].[EfParentId]) AS [A1_0]
+                FROM [dbo].[EfChilds] AS [Extent3]
+                WHERE [Extent1].[EfParentId] = [Extent3].[EfParentId]) AS [A1_0]
             FROM [dbo].[EfParents] AS [Extent1]
         )  AS [Extent1]
-    )  AS [GroupBy2]
+    )  AS [GroupBy3]
 ```
 
   * Sum Count In Children Where Children Can Be None (line 61)
@@ -899,6 +899,43 @@ SELECT
             FROM [dbo].[EfParents] AS [Extent1]
         )  AS [Project2]
     )  AS [Project4]
+```
+
+
+
+### Group: Expression Factory Extension Point Features
+#### [Order By Sequence Linq Extension](../TestGroup91ExpressionFactoryExtensionPointFeatures/Test01OrderBySequenceLinqExtension.cs):
+- Supported
+  * Basic Order By Sequence Extension (line 151)
+     * T-Sql executed is
+
+```SQL
+SELECT 
+    [Extent1].[EfParentId] AS [EfParentId], 
+    [Limit1].[EfChildId] AS [EfChildId], 
+    [Limit1].[ChildBool] AS [ChildBool], 
+    [Limit1].[ChildInt] AS [ChildInt], 
+    [Limit1].[ChildDouble] AS [ChildDouble], 
+    [Limit1].[ChildString] AS [ChildString], 
+    [Limit1].[ChildDateTime] AS [ChildDateTime], 
+    [Limit1].[ChildTimeSpan] AS [ChildTimeSpan], 
+    [Limit1].[EfParentId] AS [EfParentId1]
+    FROM  [dbo].[EfParents] AS [Extent1]
+    OUTER APPLY  (SELECT TOP (1) [Project1].[EfChildId] AS [EfChildId], [Project1].[ChildBool] AS [ChildBool], [Project1].[ChildInt] AS [ChildInt], [Project1].[ChildDouble] AS [ChildDouble], [Project1].[ChildString] AS [ChildString], [Project1].[ChildDateTime] AS [ChildDateTime], [Project1].[ChildTimeSpan] AS [ChildTimeSpan], [Project1].[EfParentId] AS [EfParentId]
+        FROM ( SELECT 
+            CASE WHEN (1 = [Extent2].[EfChildId]) THEN 2 WHEN (3 = [Extent2].[EfChildId]) THEN 1 WHEN (2 = [Extent2].[EfChildId]) THEN 0 ELSE 2147483647 END AS [C1], 
+            [Extent2].[EfChildId] AS [EfChildId], 
+            [Extent2].[ChildBool] AS [ChildBool], 
+            [Extent2].[ChildInt] AS [ChildInt], 
+            [Extent2].[ChildDouble] AS [ChildDouble], 
+            [Extent2].[ChildString] AS [ChildString], 
+            [Extent2].[ChildDateTime] AS [ChildDateTime], 
+            [Extent2].[ChildTimeSpan] AS [ChildTimeSpan], 
+            [Extent2].[EfParentId] AS [EfParentId]
+            FROM [dbo].[EfChilds] AS [Extent2]
+            WHERE [Extent1].[EfParentId] = [Extent2].[EfParentId]
+        )  AS [Project1]
+        ORDER BY [Project1].[C1] ASC ) AS [Limit1]
 ```
 
 

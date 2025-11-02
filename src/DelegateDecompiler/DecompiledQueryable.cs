@@ -40,12 +40,14 @@ namespace DelegateDecompiler
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return inner.GetEnumerator();
+            var runtimeExpression = inner.Expression.Expand();
+            return inner.Provider.CreateQuery(runtimeExpression).GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return inner.GetEnumerator();
+            var runtimeExpression = inner.Expression.Expand();
+            return (IEnumerator<T>)inner.Provider.CreateQuery(runtimeExpression).GetEnumerator();
         }
 
 #if NETSTANDARD2_1_OR_GREATER
@@ -62,7 +64,7 @@ namespace DelegateDecompiler
 
         public override string ToString()
         {
-            return inner.ToString();
+            return inner.Expression.ToString();
         }
     }
 }
