@@ -24,7 +24,7 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         [ExpressionFactory]
-        public static Expression OrderBySequence<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchKeySelector)
+        private static Expression OrderBySequence<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchKeySelector)
             where T : class
             where TKey : IEquatable<TKey>
         {

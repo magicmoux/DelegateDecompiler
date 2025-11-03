@@ -24,7 +24,7 @@ namespace DelegateDecompiler
                     var argInfos = node.Method.GetParameters()[i];
                     var argType = argInfos.ParameterType;
                     if (!ExpressionFactoryArgumentVisitor.GetValue(argType, node.Arguments[i], out var arg))
-                        throw new InvalidOperationException($"Could not convert the {argInfos.Name} into {argType.Name} for factory method {node.Method.Name}");
+                        throw new InvalidOperationException($"Could not convert the parameter {argInfos.Name} from {node.Arguments[i].Type} into {argType.Name} for factory method {node.Method.Name}");
                     args.Add(arg);
                 }
                 var result = (Expression)node.Method.Invoke(node.Object, args.ToArray());
@@ -79,6 +79,12 @@ namespace DelegateDecompiler
                     {
                         arg = ((PropertyInfo)member).GetValue(container, null);
                     }
+                    return memberExpression;
+                }
+                else if (argType.IsAssignableFrom(memberExpression.Type))
+                {
+                    arg = Expression.Lambda(memberExpression, null);
+                    return memberExpression;
                 }
                 return base.VisitMember(memberExpression);
             }
@@ -101,7 +107,8 @@ namespace DelegateDecompiler
             }
             protected override Expression VisitUnary(UnaryExpression node)
             {
-                if (node.NodeType == ExpressionType.Quote) {
+                if (node.NodeType == ExpressionType.Quote)
+                {
                     arg = node.Operand;
                     return node;
                 }
