@@ -8,7 +8,7 @@ namespace DelegateDecompiler
         public static Expression Expand(this Expression expression)
         {
             // First decompile the expression to ensure we are running in the DelegateDecompiler pipeline
-            // Then expand Expression factories calls
+            // Then expand any Expression factories calls found by visiting the expression tree
             // Then ensure that any newly created expressions are also decompiled and optimized
             return ExpressionFactoryVisitor.Build(expression.Decompile()).Decompile().Optimize();
         }

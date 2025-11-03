@@ -20,12 +20,11 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
         /// <typeparam name="TKey"></typeparam>
         /// <param name="source"></param>
         /// <param name="explicitSequence"></param>
-        /// <param name="matchSelector"></param>
-        /// <param name="defaultsTo">the default value if the value is not in the sequence, or is not returned if defaultTo is null</param>
+        /// <param name="matchKeySelector"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         [ExpressionFactory]
-        public static Expression OrderBySequence<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchSelector)
+        public static Expression OrderBySequence<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchKeySelector)
             where T : class
             where TKey : IEquatable<TKey>
         {
@@ -37,14 +36,14 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
             }
 
             Expression body = Expression.Constant(int.MaxValue);
-            LambdaExpression lambda = matchSelector;
-            var selectorParameter = matchSelector.Parameters.First();
+            LambdaExpression lambda = matchKeySelector;
+            var selectorParameter = matchKeySelector.Parameters.First();
             var valuesList = explicitSequence?.ToList() ?? new List<TKey>();
             if (valuesList.Any())
             {
                 for (var i = 0; i < valuesList.Count; i++)
                 {
-                    body = Expression.Condition(Expression.Equal(Expression.Constant(valuesList[i]), matchSelector.Body), Expression.Constant(i), body);
+                    body = Expression.Condition(Expression.Equal(Expression.Constant(valuesList[i]), matchKeySelector.Body), Expression.Constant(i), body);
                 }
                 lambda = (Expression<Func<T, int>>)Expression.Lambda(body, selectorParameter);
             }
