@@ -20,7 +20,7 @@ namespace DelegateDecompiler.EntityFrameworkCore
 
         public virtual TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
         {
-            var decompiled = expression.Expand();
+            var decompiled = expression.Build();
             return AsyncQueryProvider.ExecuteAsync<TResult>(decompiled, cancellationToken);
         }
     }

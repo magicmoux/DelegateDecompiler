@@ -40,13 +40,13 @@ namespace DelegateDecompiler
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            var runtimeExpression = inner.Expression.Expand();
+            var runtimeExpression = inner.Expression.Build();
             return inner.Provider.CreateQuery(runtimeExpression).GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            var runtimeExpression = inner.Expression.Expand();
+            var runtimeExpression = inner.Expression.Build();
             return (IEnumerator<T>)inner.Provider.CreateQuery(runtimeExpression).GetEnumerator();
         }
 

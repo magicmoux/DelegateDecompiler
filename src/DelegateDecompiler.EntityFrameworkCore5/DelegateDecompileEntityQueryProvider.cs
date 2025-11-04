@@ -9,11 +9,11 @@ namespace DelegateDecompiler.EntityFrameworkCore;
 class DelegateDecompileEntityQueryProvider(IQueryCompiler queryCompiler) : EntityQueryProvider(queryCompiler)
 {
     public override TResult Execute<TResult>(Expression expression) =>
-        base.Execute<TResult>(expression.Expand());
+        base.Execute<TResult>(expression.Build());
 
     public override object Execute(Expression expression) =>
-        base.Execute(expression.Expand());
+        base.Execute(expression.Build());
 
     public override TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default) =>
-        base.ExecuteAsync<TResult>(expression.Expand(), cancellationToken);
+        base.ExecuteAsync<TResult>(expression.Build(), cancellationToken);
 }

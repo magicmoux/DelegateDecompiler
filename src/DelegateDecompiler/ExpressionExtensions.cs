@@ -5,7 +5,7 @@ namespace DelegateDecompiler
 {
     public static class ExpressionExtensions
     {
-        public static Expression Expand(this Expression expression)
+        public static Expression Build(this Expression expression)
         {
             // First decompile the expression to ensure we are running in the DelegateDecompiler pipeline
             // Then expand any Expression factories calls found by visiting the expression tree

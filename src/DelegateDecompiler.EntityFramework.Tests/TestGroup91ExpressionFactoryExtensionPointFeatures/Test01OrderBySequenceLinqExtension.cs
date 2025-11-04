@@ -24,7 +24,7 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         [ExpressionFactory]
-        private static Expression OrderBySequence<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchKeySelector)
+        private static Expression BuildOrderBySequenceExpression<T, TKey>(Expression source, IEnumerable<TKey> explicitSequence, Expression<Func<T, TKey>> matchKeySelector)
             where T : class
             where TKey : IEquatable<TKey>
         {
@@ -62,7 +62,7 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
             where T : class
             where TKey : IEquatable<TKey>
         {
-            return (IOrderedQueryable<T>)source.Provider.CreateQuery(OrderBySequence(source.Expression, explicitSequence, matchSelector));
+            return (IOrderedQueryable<T>)source.Provider.CreateQuery(BuildOrderBySequenceExpression(source.Expression, explicitSequence, matchSelector));
         }
 
         [Decompile]
@@ -70,7 +70,7 @@ namespace DelegateDecompiler.EntityFramework.Tests.TestGroup91ExpressionFactoryE
             where T : class
             where TKey : IEquatable<TKey>
         {
-            return (IList<T>)OrderBySequence(() => source, explicitSequence, matchSelector);
+            return (IList<T>)BuildOrderBySequenceExpression(() => source, explicitSequence, matchSelector);
         }
 
         [Computed]
