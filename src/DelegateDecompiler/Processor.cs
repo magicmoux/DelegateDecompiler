@@ -148,6 +148,8 @@ namespace DelegateDecompiler
             if (instruction.OpCode == OpCodes.Nop || 
                 instruction.OpCode == OpCodes.Break ||
                 instruction.OpCode == OpCodes.Ret ||
+                instruction.OpCode == OpCodes.Ldobj ||
+                instruction.OpCode.OpCodeType == OpCodeType.Prefix ||
                 instruction.OpCode.FlowControl == FlowControl.Branch)
             {
                 // Do nothing

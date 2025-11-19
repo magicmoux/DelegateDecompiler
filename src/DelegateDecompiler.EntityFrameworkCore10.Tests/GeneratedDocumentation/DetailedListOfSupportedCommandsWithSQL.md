@@ -1,6 +1,6 @@
 Detail With Sql of supported commands
 ============
-## Documentation produced for DelegateDecompiler, version 0.34.2.0 on Wednesday, 05 March 2025 13:06
+## Documentation produced for DelegateDecompiler, version 0.34.3.0 on Wednesday, 05 March 2025 18:24
 
 This file documents what linq commands **DelegateDecompiler** supports when
 working with [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) (EF).
@@ -37,7 +37,7 @@ FROM [EfParents] AS [e]
      * T-Sql executed is
 
 ```SQL
-SELECT ~([e].[ParentBool] ^ @__staticBool_0)
+SELECT ~([e].[ParentBool] ^ @staticBool)
 FROM [EfParents] AS [e]
 ```
 
@@ -191,7 +191,7 @@ FROM [EfParents] AS [e]
      * T-Sql executed is
 
 ```SQL
-SELECT ~([e].[ParentBool] ^ @__staticBool_0)
+SELECT ~([e].[ParentBool] ^ @staticBool)
 FROM [EfParents] AS [e]
 ```
 
@@ -218,7 +218,7 @@ FROM [EfParents] AS [e]
      * T-Sql executed is
 
 ```SQL
-SELECT ~CAST([e].[ParentInt] ^ @__staticInt_0 AS bit)
+SELECT ~CAST([e].[ParentInt] ^ @staticInt AS bit)
 FROM [EfParents] AS [e]
 ```
 
@@ -311,7 +311,7 @@ WHERE [e].[ParentBool] = CAST(1 AS bit)
 ```SQL
 SELECT [e].[EfParentId]
 FROM [EfParents] AS [e]
-WHERE [e].[ParentBool] = @__staticBool_0
+WHERE [e].[ParentBool] = @staticBool
 ```
 
   * Where Int Equals Constant (line 81)
@@ -414,7 +414,7 @@ ORDER BY (
      * T-Sql executed is
 
 ```SQL
-SELECT TOP(@__p_0) [e].[EfParentId]
+SELECT TOP(@p) [e].[EfParentId]
 FROM [EfParents] AS [e]
 ORDER BY (
     SELECT COUNT(*)
@@ -432,7 +432,7 @@ ORDER BY (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e0]
     WHERE [e].[EfParentId] = [e0].[EfParentId])
-OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+OFFSET @p ROWS FETCH NEXT @p0 ROWS ONLY
 ```
 
   * Where Any Children Then Order By Then Skip Take (line 81)
@@ -449,7 +449,7 @@ ORDER BY (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e1]
     WHERE [e].[EfParentId] = [e1].[EfParentId])
-OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+OFFSET @p ROWS FETCH NEXT @p ROWS ONLY
 ```
 
 
@@ -572,7 +572,7 @@ FROM [EfParents] AS [e]
 SELECT (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e0]
-    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @__i_0)
+    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @i)
 FROM [EfParents] AS [e]
 ```
 
@@ -583,7 +583,7 @@ FROM [EfParents] AS [e]
 SELECT (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e0]
-    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @__i_0 AND [e0].[EfParentId] = @__j_1)
+    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @i AND [e0].[EfParentId] = @j)
 FROM [EfParents] AS [e]
 ```
 
@@ -656,7 +656,7 @@ FROM [EfParents] AS [e]
 SELECT (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e0]
-    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @__i_0)
+    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @i)
 FROM [EfParents] AS [e]
 ```
 
@@ -667,7 +667,7 @@ FROM [EfParents] AS [e]
 SELECT (
     SELECT COUNT(*)
     FROM [EfChildren] AS [e0]
-    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @__i_0 AND [e0].[EfParentId] = @__j_1)
+    WHERE [e].[EfParentId] = [e0].[EfParentId] AND [e0].[ChildInt] = @i AND [e0].[EfParentId] = @j)
 FROM [EfParents] AS [e]
 ```
 
