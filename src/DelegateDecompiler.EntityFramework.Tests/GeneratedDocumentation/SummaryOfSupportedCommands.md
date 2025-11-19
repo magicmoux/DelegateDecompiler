@@ -1,6 +1,6 @@
 Summary of supported commands
 ============
-## Documentation produced for DelegateDecompiler, version 1.0.0.0 on Tuesday, 04 November 2025 00:22
+## Documentation produced for DelegateDecompiler, version 0.34.2.0 on Wednesday, 05 March 2025 13:06
 
 This file documents what linq commands **DelegateDecompiler** supports when
 working with [Entity Framework v6.1](http://msdn.microsoft.com/en-us/data/aa937723) (EF).
@@ -57,10 +57,6 @@ More will appear as we move forward.*
 ### Group: Additional Features
 - Supported
   * [Nested Expressions](../TestGroup90AdditionalFeatures/Test01NestedExpressions.cs) (1 tests)
-
-### Group: Expression Factory Extension Point Features
-- Supported
-  * [Order By Sequence Linq Extension](../TestGroup91ExpressionFactoryExtensionPointFeatures/Test01OrderBySequenceLinqExtension.cs) (1 tests)
 
 
 The End
