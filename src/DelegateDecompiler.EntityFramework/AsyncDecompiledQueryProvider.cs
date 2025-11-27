@@ -54,7 +54,7 @@ namespace DelegateDecompiler.EntityFramework
             {
                 throw new InvalidOperationException("The source IQueryProvider doesn't implement IDbAsyncQueryProvider.");
             }
-            var decompiled = expression.Decompile();
+            var decompiled = JIT.ExpressionFactoryVisitor.Build(expression);
             return asyncProvider.ExecuteAsync(decompiled, cancellationToken);
         }
 

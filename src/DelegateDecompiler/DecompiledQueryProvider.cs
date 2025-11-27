@@ -46,13 +46,14 @@ namespace DelegateDecompiler
 
         public object Execute(Expression expression)
         {
-            var decompiled = expression.Decompile().Optimize();
+            var decompiled = JIT.ExpressionFactoryVisitor.Build(expression);
+
             return Inner.Execute(decompiled);
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
-            var decompiled = expression.Decompile().Optimize();
+            var decompiled = JIT.ExpressionFactoryVisitor.Build(expression);
             return Inner.Execute<TResult>(decompiled);
         }
     }

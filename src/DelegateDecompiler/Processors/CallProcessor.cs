@@ -164,6 +164,8 @@ internal class CallProcessor : IProcessor
             return Expression.Empty();
         }
 
+        // Do not attempt to evaluate ExpressionFactory methods here; expansion happens later in ExpressionFactoryVisitor/MethodBodyDecompiler
+
         if (instance.Expression != null)
             return Expression.Call(instance, m, arguments);
 

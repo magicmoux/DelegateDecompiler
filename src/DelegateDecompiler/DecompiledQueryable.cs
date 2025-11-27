@@ -40,12 +40,12 @@ namespace DelegateDecompiler
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return inner.GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return inner.GetEnumerator();
+            return inner.Provider.CreateQuery<T>(JIT.ExpressionFactoryVisitor.Build(inner.Expression)).GetEnumerator();
         }
 
 #if NETSTANDARD2_1_OR_GREATER
