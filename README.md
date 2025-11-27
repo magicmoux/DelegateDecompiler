@@ -1,20 +1,26 @@
-# ExpressionFactory (JIT) — DelegateDecompiler
+# ExpressionFactory (JIT) â€” DelegateDecompiler
 
 This branch demonstrates PoC of a JIT-oriented extension point called `ExpressionFactory` that lets library authors provide extension methods which produce `System.Linq.Expressions.Expression` values at call sites (i.e. dynamically generated at runtime). 
-Factories let you generate complex or dynamic behaviors as Linq Expressions that can still integrate with DelegateDecompiler.
+Factories may help you generate complex or dynamic behaviors as Linq Expressions that can still integrate with DelegateDecompiler and stay provider-friendly (such as EntityFramework.)
 
 This README documents the ExpressionFactory feature, where the JIT helpers live, usage patterns, limitations and test guidance.
+For general project usage and other components consult the main branch README or the original repository this one is forked from.
+
+## Foreword
+
+- The JIT code is still in development, use-cases and unit tests are most welcome if you're interested.
+- See .github/copilot-instructions.md for test-first development guidelines.
 
 ## Overview
 
 - Mark a method with `[ExpressionFactory]` that returns an `Expression` constructed from the call-site arguments.
-- You can additionaly define methods or properties marked with `[Decompile]`/`[Computed]` to simplify integration of your factory into Linq queries.
+- You can additionaly define methods or properties marked with `[Decompile]`/`[Computed]` to syntax-sugar integration of your factories into Linq queries.
 - Before a query is executed or enumerated, the JIT visitor attempts to materialize factory arguments (constants, quoted lambdas, captured values, arrays, lists, etc.), convert them to the factory parameter types when possible, and invoke the factory method to obtain an `Expression` to splice into the caller's expression tree.
 - This enables library authors to expose concise call-site APIs while still producing expressions that ORM providers can translate into SQL or other backend queries.
 
 ## Key attributes and API
 
-- `[ExpressionFactory]` — annotate methods that build `Expression` instances.
+- `[ExpressionFactory]` â€” annotate methods that build `Expression` instances.
 
 Factory method example:
 
@@ -47,14 +53,14 @@ var q = db.EfParents
 
 ## Where the implementation lives
 
-- `src/DelegateDecompiler/JIT/ExpressionFactoryVisitor.cs` — walks expressions and expands factory calls when possible.
-- `src/DelegateDecompiler/JIT/ExpressionFactoryArgumentHelper.cs` — tries to extract and convert call-site arguments to runtime values or typed `Expression<>` instances.
-- `src/DelegateDecompiler/JIT/ExpressionFactoryInvoker.cs` — invokes the factory method via reflection and performs simple conversions (constructor from enumerable, ToArray conversion, etc.).
-- `src/DelegateDecompiler/ExpressionExtensions.cs` and `src/DelegateDecompiler/MethodBodyDecompiler.cs` — integration points used by the visitor pipeline.
+- `src/DelegateDecompiler/JIT/ExpressionFactoryVisitor.cs` â€” walks expressions and expands factory calls when possible.
+- `src/DelegateDecompiler/JIT/ExpressionFactoryArgumentHelper.cs` â€” tries to extract and convert call-site arguments to runtime values or typed `Expression<>` instances.
+- `src/DelegateDecompiler/JIT/ExpressionFactoryInvoker.cs` â€” invokes the factory method via reflection and performs simple conversions (constructor from enumerable, ToArray conversion, etc.).
+- `src/DelegateDecompiler/ExpressionExtensions.cs` and `src/DelegateDecompiler/MethodBodyDecompiler.cs` â€” integration points used by the visitor pipeline.
 
 ## How it works (high level)
 
-1. The ExpressionFactory visitor runs just before query execution (see provider wrappers in EntityFramework/EF Core integration projects).
+1. The ExpressionFactory visitor runs just before query execution or enumeration (see provider wrappers in EntityFramework/EF Core integration projects).
 2. For each `MethodCallExpression` that targets a method marked with `[ExpressionFactory]`, it tries to extract the method arguments:
    - If the argument is a `ConstantExpression` holding a runtime value, the value is used.
    - If the argument is a quoted `LambdaExpression` or a `LambdaExpression`, the visitor will attempt to coerce it into the requested `Expression<T>` type.
@@ -65,7 +71,7 @@ var q = db.EfParents
 
 ## Implementation guidance for factories (yet so far)
 
-- Factories should and free of side effects.
+- Factories should be free of side effects.
 - Build lambdas using fresh `ParameterExpression` instances and avoid capturing caller parameters that cannot exist at factory invocation time.
 
 Example implementation pattern (order-by sequence selector):
@@ -74,11 +80,15 @@ Example implementation pattern (order-by sequence selector):
 - Create a fresh `ParameterExpression` for the selector.
 - Create a conditional chain that maps `key == value[i] ? i : previous` and return `Expression.Call(typeof(Queryable), "OrderBy", ...)`.
 
-## Limitations and safety
+## Limitations, notes and safety
 
+- **Factories MUST return a `System.Linq.Expressions.Expression`, since the returned value is to be inserted into a LINQ Expression Tree**
 - The argument helper is conservative: it refuses to compile expressions that contain `ParameterExpression` nodes (to avoid compiling lambdas that depend on variables out of the current scope).
 - Not all argument forms are supported. Avoid passing side-effecting or environment-dependent expressions as factory arguments.
-- When argument extraction fails the factory call remains in the tree; the rest of the decompilation pipeline may still handle or inline it later.
+- Factories are invoked only when arguments are materializable or sensibly convertible. If not, the factory call remains as an Expression.Call and may not be decompiled later.
+- The argument helper will attempt to compile and evaluate some expression forms (arrays, simple method calls) â€” this is conservative and can be extended if you add new patterns; avoid side-effecting expressions in factory arguments.
+- The conversion logic tries common patterns (constructing List<T> from IEnumerable<T>, converting sequences to arrays, etc.) but is not yet exhaustive.
+- Tests: add unit tests that exercise both DelegateDecompiler.JIT.ExpressionFactoryVisitor and ExpressionFactoryInvoker for new scenarios.
 
 ## Tests and examples
 
@@ -101,17 +111,13 @@ dotnet test -c Debug src/DelegateDecompiler.EntityFramework.Tests/DelegateDecomp
 ```
 
 - Add unit tests covering new argument patterns before changing the argument helper.
-- Avoid changing tests to suit implementation bugs — fix the implementation instead.
+- Avoid changing tests to suit implementation bugs â€” fix the implementation instead.
 
 ## Troubleshooting
 
 - If EF translation complains that an `Expression` node is used where a runtime `IEnumerable<T>` is expected, ensure the factory receives a materialized runtime sequence (e.g. pass `.ToList()` at call site or ensure the argument helper can evaluate the argument safely).
-- If you see "variables out of scope" during argument compilation, that indicates the helper attempted to compile an expression containing `ParameterExpression` nodes — revise the helper logic or change how the argument is passed.
+- If you see "variables out of scope" during argument compilation, that indicates the helper attempted to compile an expression containing `ParameterExpression` nodes â€” revise the helper logic or change how the argument is passed.
 
-## Contributing
 
-Follow the standard workflow in `.github/copilot-instructions.md` (tests first, run tests frequently, keep changes focused).
 
----
 
-This README concentrates the project's JIT `ExpressionFactory` documentation. For general project usage and other components consult the main branch README or the original repository this one is forked from.
