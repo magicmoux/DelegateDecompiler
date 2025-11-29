@@ -1,7 +1,7 @@
 # ExpressionFactory (JIT) — DelegateDecompiler
 
-This branch demonstrates PoC of a JIT-oriented extension point called `ExpressionFactory` that lets library authors provide extension methods which produce `System.Linq.Expressions.Expression` values at call sites (i.e. dynamically generated at runtime). 
-Factories may help you generate complex or dynamic behaviors as Linq Expressions that can still integrate with DelegateDecompiler and stay provider-friendly (such as EntityFramework.)
+This branch demonstrates PoC of a JIT-oriented extension point called `ExpressionFactory` that lets library authors provide extension methods which produce `System.Linq.Expressions.Expression` values dynamically generated at runtime. 
+Factories may help you generate complex or dynamic behaviors as Linq Expressions that can still be used with DelegateDecompiler through an existing DelegateQueryable and stay provider-friendly (such as EntityFramework though still restricted by the provider limitations of course)
 
 This README documents the ExpressionFactory feature, where the JIT helpers live, usage patterns, limitations and test guidance.
 For general project usage and other components consult the main branch README or the original repository this one is forked from.
