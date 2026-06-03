@@ -37,7 +37,7 @@ Necessary nuance:
 
 Add a call to a new static method `TryOptimizeMutuallyExclusiveXor` inside `VisitBinary` of `OptimizeExpressionVisitor` that:
 1. Filters on `ExpressionType.ExclusiveOr` only.
-2. Delegates mutual exclusion detection to a set of **declarative registered rules**.
+2. Delegates mutual exclusion detection to a set of **declarative registered rules** .
 3. If a rule recognises the pattern, rewrites to `Expression.OrElse(left, right)`.
 4. Otherwise passes the expression through unchanged.
 
@@ -64,6 +64,8 @@ static readonly Func<Expression, Expression, bool>[] MutualExclusionRules =
 
 **Adding a rule = adding one static method + registering it in this array.**
 No other file needs to be modified.
+
+**NB:** rules can be stored in a specific class
 
 #### 3.2.2 Equivalence Verification: Normalisation Principle
 
@@ -122,10 +124,12 @@ After phase 1 validation:
 ## 4) Architecture / Compatibility Impact
 
 - No public API breakage.
-- Modified files: only `src/DelegateDecompiler/OptimizeExpressionVisitor.cs`.
+- Modified files: only `src/DelegateDecompiler/OptimizeExpressionVisitor.cs` and a rule-library class.
 - New file: `src/DelegateDecompiler.Tests/XorOptimizationTests.cs`.
 - Compatible with all current TFMs (`.NET Framework 4.0/4.5`, `.NET Standard`, `.NET 8/9/10`) as it relies solely on `System.Linq.Expressions`.
-- Negligible perf risk: the rule list is short, the call is triggered only on `ExclusiveOr`, and the `expressionsCache` in `Visit()` applies.
+- Negligible perf risk: if the rule list is short and since the call is triggered only on `ExclusiveOr`, and the `expressionsCache` in `Visit()` applies.
+
+**NB:** if the rule-set increases too much, indexing use-case based strategies may be necessary.
 
 ## 5) Detailed Implementation Plan
 
