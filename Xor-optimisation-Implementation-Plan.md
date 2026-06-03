@@ -1,5 +1,12 @@
 ﻿# Implementation Plan — Native mutual exclusivity of XOR clauses Optimisation
 
+## Context
+
+Usually the compiler may explode or duplicate an OR operation within a query in complex If-Then-Else structures throughout the query AST.
+In cases when the OR members are mutually exclusive, using a XOR pattern is simply optimal because most compilers will preserve the operation as a single OpCode.
+However, neither the query optimizer nor ORM translators can yet detect the mutual exclusivity and translate the XOR pattern fully with exclusivity checks.
+This may lead to unnecessary subqueries explosion in the translated queries.
+
 ## 1) Feasibility Assessment
 
 **Feasibility Level: High**
