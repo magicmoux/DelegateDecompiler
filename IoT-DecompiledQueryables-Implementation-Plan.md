@@ -79,7 +79,7 @@ Keep constructors backward compatible:
 
 Helpers:
 - `Expression ApplyProcessors(Expression expression)`
-- `void NotifyExecute(Expression expression)`
+- `void NotifyExecute<T>(DecompiledQueryable<T> queryable)`
 
 #### 3.2.4 Fluent Extensions
 
@@ -87,7 +87,7 @@ Add fluent registration methods in `DecompileExtensions`:
 - `WithProcessor<T>(this IQueryable<T> self, IDecompiledQueryProcessor processor)`
 - `WithProcessing<T>(this IQueryable<T> self, Func<Expression, Expression> processor)`
 - `WithExecutionHook<T>(this IQueryable<T> self, IDecompiledQueryExecutionHook hook)`
-- `WithOnExecute<T>(this IQueryable<T> self, Action<Expression> hook)`
+- `WithOnExecute<T>(this IQueryable<T> self, Action<DecompiledQueryable<T>> hook)`
 
 Behavior:
 - If query already uses `DecompiledQueryProvider`, append to existing pipeline.
