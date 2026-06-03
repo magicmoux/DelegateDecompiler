@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32901.215
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DelegateDecompiler", "src\DelegateDecompiler\DelegateDecompiler.csproj", "{11F42698-BB34-4175-9DA8-80BD62171D02}"
 EndProject
@@ -14,11 +13,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		build.cmd = build.cmd
 		src\Directory.Build.props = src\Directory.Build.props
-		LICENSE.txt = LICENSE.txt
-		README.md = README.md
-		test.cmd = test.cmd
-		global.json = global.json
 		GitVersion.yml = GitVersion.yml
+		global.json = global.json
+		LICENSE.txt = LICENSE.txt
+		PostDecompile-ProcessingChain-Implementation-Plan.md = PostDecompile-ProcessingChain-Implementation-Plan.md
+		README.md = README.md
+		ROADMAP.md = ROADMAP.md
+		test.cmd = test.cmd
+		Xor-optimisation-Implementation-Plan.md = Xor-optimisation-Implementation-Plan.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DelegateDecompiler.EntityFramework.Tests", "src\DelegateDecompiler.EntityFramework.Tests\DelegateDecompiler.EntityFramework.Tests.csproj", "{CC1F2D70-08F7-4DA0-963C-E1915F233C45}"

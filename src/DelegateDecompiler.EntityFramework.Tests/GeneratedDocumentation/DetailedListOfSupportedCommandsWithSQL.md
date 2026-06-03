@@ -1,6 +1,6 @@
 Detail With Sql of supported commands
 ============
-## Documentation produced for DelegateDecompiler, version 0.34.2.0 on Wednesday, 05 March 2025 13:06
+## Documentation produced for DelegateDecompiler, version 1.0.0.0 on Wednesday, 03 June 2026 12:06
 
 This file documents what linq commands **DelegateDecompiler** supports when
 working with [Entity Framework v6.1](http://msdn.microsoft.com/en-us/data/aa937723) (EF).
@@ -679,17 +679,17 @@ SELECT
 
 ```SQL
 SELECT 
-    [GroupBy2].[A1] AS [C1]
+    [GroupBy3].[A1] AS [C1]
     FROM ( SELECT 
         SUM([Extent1].[A1_0]) AS [A1]
         FROM ( SELECT 
             (SELECT 
                 COUNT(1) AS [A1]
-                FROM [dbo].[EfChilds] AS [Extent2]
-                WHERE [Extent1].[EfParentId] = [Extent2].[EfParentId]) AS [A1_0]
+                FROM [dbo].[EfChilds] AS [Extent3]
+                WHERE [Extent1].[EfParentId] = [Extent3].[EfParentId]) AS [A1_0]
             FROM [dbo].[EfParents] AS [Extent1]
         )  AS [Extent1]
-    )  AS [GroupBy2]
+    )  AS [GroupBy3]
 ```
 
   * Sum Count In Children Where Children Can Be None (line 61)
