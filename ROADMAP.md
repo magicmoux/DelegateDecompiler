@@ -25,13 +25,13 @@ Goal: find a way to analyse XOR expressions and detect whether members are mutua
 [Proposed plan](./Xor-optimisation-Implementation-Plan.md)
 
 ### Complementary processing IoT on DecompiledQueryables
-This feature focuses on defining way to decouple the decompilation process from custom processing chains that should occur between the decompilation of a query and the translation to the ORM's query language.
+This feature focuses on defining a way to decouple the decompilation process from custom processing chains that need to exploit a DecompiledQueryable optimized expression for specific application needs.
 
-Problem: in some cases, users may want to perform custom processing on the decompiled expression tree before it is translated to the ORM's query language. This could include optimizations, transformations, or other manipulations that are specific to their application's needs.
+Problem: in some cases, users may need to perform custom processing on a decompiled query upon execution in an automatable way. This may include analysis, logging, telemetry, query policy checks, or other domain-specific operations.
 
-Goal: define a way to allow users to plug in custom processing chains that can be executed after the decompilation process and before the translation to the ORM's query language. 
-This could range from simple instructions chaining to defining an interface for custom processors, and providing a mechanism for users to register their processors with the decompilation pipeline.
+As for why this feature might be best addressed within DelegateDecompiler, the extensions need to be invoked during query execution within the `GetEnumerator` or `GetAsyncEnumerator` methods of `DecompiledQueryable<T>` or `Execute` methods of `DecompiledQueryProvider`.
 
-Basic proposal: add a simple `Action<>` parameter to the `Decompile` method that allows users to specify a custom processing chain action that should be executed on the decompiled expression tree before it is translated to the ORM's query language.
+Goal: define a way to allow users to plug in custom processing chains that can be invoked automatically through native DelegateDecompiler methods between decompilation and ORM-specific translation/execution phases.
+Solutions may range from fluent instructions chaining, simple event handlers, or dedicated processor interfaces with registration mechanisms.
 
-[Proposed plan](./PostDecompile-ProcessingChain-Implementation-Plan.md)
+[Proposed plan](./IoT-DecompiledQueryables-Implementation-Plan.md)
