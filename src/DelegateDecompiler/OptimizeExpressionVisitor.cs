@@ -264,6 +264,18 @@ namespace DelegateDecompiler
             return expression;
         }
 
+        internal static Expression StripNot(Expression expression, out bool negated)
+        {
+            if (expression.NodeType == ExpressionType.Not)
+            {
+                negated = true;
+                return ((UnaryExpression)expression).Operand;
+            }
+
+            negated = false;
+            return expression;
+        }
+
         static bool ExtractNullableArgument(Expression hasValue, Expression getValueOrDefault, out Expression expression)
         {
             MemberExpression memberExpression;
@@ -313,12 +325,18 @@ namespace DelegateDecompiler
         {
             var left = Visit(node.Left);
             var right = Visit(node.Right);
-            
+
             if (TryOptimizeTypeAsComparison(node.NodeType, left, right, out var typeIsExpression))
             {
                 return typeIsExpression;
             }
-            
+
+            if (node.NodeType == ExpressionType.ExclusiveOr &&
+                TryOptimizeXor(left, right, out var xorResult))
+            {
+                return xorResult;
+            }
+
             if (node.Right is ConstantExpression rightConstant)
             {
                 if (rightConstant.Value as bool? == false)
@@ -361,6 +379,42 @@ namespace DelegateDecompiler
             }
 
             return node.Update(left, VisitAndConvert(node.Conversion, nameof (VisitBinary)), right);
+        }
+
+        static bool TryOptimizeXor(Expression left, Expression right, out Expression result)
+        {
+            result = null;
+            if (left.Type != typeof(bool) || right.Type != typeof(bool))
+                return false;
+
+            var strippedLeft = StripNot(left, out var leftNegated);
+            var strippedRight = StripNot(right, out var rightNegated);
+
+            // Checking for A ^ A <=> false
+            if (leftNegated == rightNegated &&
+                (ReferenceEquals(strippedLeft, strippedRight) || strippedLeft.ToString() == strippedRight.ToString()))
+            {
+                result = Expression.Constant(false);
+                return true;
+            }
+            // Checking for A ^ !A <=> true
+            if (leftNegated != rightNegated &&
+                (ReferenceEquals(strippedLeft, strippedRight) || strippedLeft.ToString() == strippedRight.ToString()))
+            {
+                result = Expression.Constant(true);
+                return true;
+            }
+
+            foreach (var rule in XorOptimisationRules.MutualExclusionRules)
+            {
+                if (rule(left, right))
+                {
+                    result = Expression.OrElse(left, right);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected override Expression VisitUnary(UnaryExpression node)

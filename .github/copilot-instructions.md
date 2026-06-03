@@ -1,5 +1,10 @@
 # DelegateDecompiler - GitHub Copilot Instructions
 
+## global behaviour
+
+- always limit the output in the chat to the bare minimum
+- do not provide internal comments, only terse progress messages
+
 ## Project Overview
 
 DelegateDecompiler is a .NET library that decompiles delegates and method bodies to their lambda representation. It enables computed properties in LINQ queries by translating `[Computed]` attributes into executable expressions that can be processed by Entity Framework and other ORMs.

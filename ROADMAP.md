@@ -6,7 +6,8 @@ This document outlines the roadmap for additional features to be implemented in 
 - The features are categorized based on estimated timeline for completion.
 - Features must be evaluated for feasibility and impact before being added to the development cycle.
 - Solutions' proposed plans and implementation must be redacted in English and must follow the established coding standards, best practices and Copilot's instruction set for this repo.
-- Proposals muste be referenced in the Roadmap using markdown syntax `[Proposed Plan](...)`
+- Proposals must include the roadmap feature content for initial context 
+- Proposals must be referenced in the Roadmap using markdown syntax `[Proposed Plan](...)`
 
 ## Proposed features
 - XOR simplificable patterns decompiled optimisation
