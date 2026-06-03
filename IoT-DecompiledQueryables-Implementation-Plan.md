@@ -84,10 +84,10 @@ Helpers:
 #### 3.2.4 Fluent Extensions
 
 Add fluent registration methods in `DecompileExtensions`:
-- `WithProcessor<T>(this IQueryable<T> self, IDecompiledQueryProcessor processor)`
-- `WithProcessing<T>(this IQueryable<T> self, Func<Expression, Expression> processor)`
-- `WithExecutionHook<T>(this IQueryable<T> self, IDecompiledQueryExecutionHook hook)`
-- `WithOnExecute<T>(this IQueryable<T> self, Action<DecompiledQueryable<T>> hook)`
+- `WithProcessor<T>(this IQueryable<T> self, params IDecompiledQueryProcessor[] processors)`
+- `WithProcessing<T>(this IQueryable<T> self, params Func<Expression, Expression>[] processors)`
+- `WithAsyncExecutionHook<T>(this IQueryable<T> self, params IDecompiledQueryAsyncExecutionHook[] hooks)`
+- `WithAsyncOnExecute<T>(this IQueryable<T> self, params Action<DecompiledQueryable<T>>[] hooks)`
 
 Behavior:
 - If query already uses `DecompiledQueryProvider`, append to existing pipeline.
@@ -98,7 +98,7 @@ Behavior:
 
 Provider path:
 - `CreateQuery<TElement>`: `decompile -> optimize -> apply processors -> inner.CreateQuery`
-- `Execute` / `Execute<TResult>`: same sequence, then `NotifyExecute(finalExpression)` before forwarding to inner provider.
+- `Execute` / `Execute<TResult>`: same sequence, then `NotifyExecuteAsync(decompiledQueryable)` before forwarding to inner provider.
 
 Queryable path:
 - In `DecompiledQueryable<T>.GetEnumerator` and `GetAsyncEnumerator`, trigger provider execution notification for the current expression before delegating to `inner`.
@@ -117,7 +117,7 @@ This explicitly satisfies the roadmap requirement about execution-time invocatio
 - No breaking changes required.
 - New file(s):
   - `src/DelegateDecompiler/IDecompiledQueryProcessor.cs`
-  - `src/DelegateDecompiler/IDecompiledQueryExecutionHook.cs`
+  - `src/DelegateDecompiler/IDecompiledQueryAsyncExecutionHook.cs`
   - optional internal adapters for delegate-based overloads.
 - Modified files:
   - `src/DelegateDecompiler/DecompiledQueryProvider.cs`
