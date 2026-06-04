@@ -1,9 +1,9 @@
 # DelegateDecompiler - GitHub Copilot Instructions
 
-## global behaviour
+## Global Copilot Behaviour
 
 - always limit the output in the chat to the bare minimum
-- do not provide internal comments, only terse progress messages
+- unless explicitely required, do not provide internal comments, only terse progress messages 
 
 ## Project Overview
 
