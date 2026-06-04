@@ -30,7 +30,6 @@ namespace DelegateDecompiler
                 return true;
             }
 
-            // TODO: check for simple cases where the predicates are the same except for a Not, e.g. x => x > 5 and x => !(x > 5)
             throw new NotImplementedException(""); //leftPredicate.ToString() == rightPredicate.ToString().Replace("!", "");
         }
 
@@ -57,6 +56,12 @@ namespace DelegateDecompiler
             return false;
         }
 
+        /// <summary>
+        /// Currently only handles cases of the !subject.Any() ^ subject.[AnotherMethod]().
+        /// </summary>
+        /// <param name="rawLeft"></param>
+        /// <param name="rawRight"></param>
+        /// <returns></returns>
         static bool IsXorWithAnyExclusive(Expression rawLeft, Expression rawRight)
         {
             var left = OptimizeExpressionVisitor.StripNot(rawLeft, out var leftNegated);
@@ -92,7 +97,6 @@ namespace DelegateDecompiler
                 return false;
             }
 
-            //TODO: Implement cases that depend on the other method specificity, e.g. Contains, All, etc. For now just check for the same source.
             return ExpressionsAreEqual(anySource, otherSource);
         }
     }

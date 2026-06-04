@@ -57,19 +57,6 @@ namespace DelegateDecompiler.Tests
             Assert.That(decompiled.Body.NodeType, Is.EqualTo(ExpressionType.OrElse));
         }
 
-        [Test(Description = "Inferring previous case using !Any() ^ Where(predicate).Any()"), 
-            Ignore("Not handled, treading on too complex grounds : Any(predicate) <=> Where(predicate).Any()")
-        ]
-        public void Test_OutOfScope_NotAny_Xor_WhereAny_RewritesToOrElse()
-        {
-            Expression<Func<IList<int>, int, bool>> expected = (items, value) => !items.Any() || items.Where(x => x == value).Any();
-            Func<IList<int>, int, bool> compiled = (items, value) => !items.Where(x => x > 5).Any() ^ items.Where(x => x > 5).Where(x => x == value).Any();
-
-            var decompiled = Test(compiled, expected);
-
-            Assert.That(decompiled.Body.NodeType, Is.EqualTo(ExpressionType.OrElse));
-        }
-
         [Test]
         public void Test_Any_Xor_NotContains_RewritesToOrElse()
         {
