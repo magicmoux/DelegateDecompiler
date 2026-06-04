@@ -10,7 +10,7 @@ namespace DelegateDecompiler.Tests
     public class XorOptimisationTests : DecompilerTestsBase
     {
 
-        [Test(Description = "Trivial case of A ^ !A")]
+        [Test]
         public void Test_Parameter_Xor_NotParameter_RewritesToTrue()
         {
             // This is a trivial case of A ^ !A 
@@ -23,11 +23,11 @@ namespace DelegateDecompiler.Tests
             Assert.That(((ConstantExpression)decompiled.Body).Value, Is.EqualTo(true));
         }
 
-        [Test(Description = "Inferred case of A ^ !A through A ^ B having A <=> !B"), Ignore("Not yet capable of optimizing A ^ B where A = !B")]
+        [Test]
         public void Test_Parameter_Xor_AllCatching_RewritesToTrue()
         {
-            Expression<Func<int, bool>> expected = value => true;
-            Func<int, bool> compiled = value => value < 5 ^ value >= 5;
+            Expression<Func<int?, bool>> expected = value => true;
+            Func<int?, bool> compiled = value => value < 5 ^ value >= 5;
 
             var decompiled = Test(compiled, expected);
 
@@ -57,11 +57,13 @@ namespace DelegateDecompiler.Tests
             Assert.That(decompiled.Body.NodeType, Is.EqualTo(ExpressionType.OrElse));
         }
 
-        [Test(Description = "Inferring previous case using !Any() ^ Where(predicate).Any()"), Ignore("Not yet capable of inferring Any(predicate) <=> Where(predicate).Any()")]
-        public void Test_NotAny_Xor_WhereAny_RewritesToOrElse()
+        [Test(Description = "Inferring previous case using !Any() ^ Where(predicate).Any()"), 
+            Ignore("Not handled, treading on too complex grounds : Any(predicate) <=> Where(predicate).Any()")
+        ]
+        public void Test_OutOfScope_NotAny_Xor_WhereAny_RewritesToOrElse()
         {
             Expression<Func<IList<int>, int, bool>> expected = (items, value) => !items.Any() || items.Where(x => x == value).Any();
-            Func<IList<int>, int, bool> compiled = (items, value) => !items.Any() ^ items.Where(x => x == value).Any();
+            Func<IList<int>, int, bool> compiled = (items, value) => !items.Where(x => x > 5).Any() ^ items.Where(x => x > 5).Where(x => x == value).Any();
 
             var decompiled = Test(compiled, expected);
 

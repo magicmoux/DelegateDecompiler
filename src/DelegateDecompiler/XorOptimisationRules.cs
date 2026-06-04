@@ -36,6 +36,7 @@ namespace DelegateDecompiler
 
         static bool TryGetLinqSource(MethodCallExpression call, out Expression source)
         {
+            //TODO: get the source for more Linq methods, for now just check for the first argument or the object for extension methods.
             source = call.Object ?? (call.Arguments.Count >= 1 ? call.Arguments[0] : null);
             return source != null;
         }

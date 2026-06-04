@@ -381,25 +381,24 @@ namespace DelegateDecompiler
             return node.Update(left, VisitAndConvert(node.Conversion, nameof (VisitBinary)), right);
         }
 
-        static bool TryOptimizeXor(Expression left, Expression right, out Expression result)
+        private bool TryOptimizeXor(Expression left, Expression right, out Expression result)
         {
             result = null;
             if (left.Type != typeof(bool) || right.Type != typeof(bool))
                 return false;
 
-            var strippedLeft = StripNot(left, out var leftNegated);
-            var strippedRight = StripNot(right, out var rightNegated);
-
-            // Checking for A ^ A <=> false
-            if (leftNegated == rightNegated &&
-                (ReferenceEquals(strippedLeft, strippedRight) || strippedLeft.ToString() == strippedRight.ToString()))
+            if (ExpressionsAreEqual(left, right))
             {
                 result = Expression.Constant(false);
                 return true;
             }
-            // Checking for A ^ !A <=> true
-            if (leftNegated != rightNegated &&
-                (ReferenceEquals(strippedLeft, strippedRight) || strippedLeft.ToString() == strippedRight.ToString()))
+
+            var strippedLeft = StripNot(left, out var leftNegated);
+            var strippedRight = StripNot(right, out var rightNegated);
+            var notLeft = leftNegated ? strippedLeft : Visit(Expression.Not(strippedLeft));
+            var notRight = rightNegated ? strippedRight : Visit(Expression.Not(strippedRight));
+
+            if (ExpressionsAreEqual(left, notRight) || ExpressionsAreEqual(right, notLeft))
             {
                 result = Expression.Constant(true);
                 return true;
@@ -439,6 +438,11 @@ namespace DelegateDecompiler
             }
 
             return base.VisitMethodCall(node);
+        }
+
+        static bool ExpressionsAreEqual(Expression left, Expression right)
+        {
+            return ReferenceEquals(left, right) || left.ToString() == right.ToString();
         }
 
         static bool Invert(ref BinaryExpression expression)
